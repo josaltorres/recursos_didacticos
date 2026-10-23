@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Enfoques de la administración</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&display=swap">
+<style>
+:root{
+  --paper:#F3F5F2; --surface:#FBFCFA; --ink:#17211C; --muted:#526058; --line:#D3DBD5;
+  --accent:#1E4D3B; --brass:#94703D; --on-accent:#FBFCFA;
+  --era-1:#1E4D3B; --era-2:#94703D; --era-3:#2F5170; --era-4:#56598A;
+  --fs:20px;
+  --serif:"Newsreader","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:"Atkinson Hyperlegible","Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#111714; --surface:#17201B; --ink:#E5EBE7; --muted:#A2B0A8; --line:#2C3832;
+    --accent:#8CC4A7; --brass:#D6B074; --on-accent:#111714;
+    --era-1:#8CC4A7; --era-2:#D6B074; --era-3:#8FB2D3; --era-4:#ABAEDB;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111714; --surface:#17201B; --ink:#E5EBE7; --muted:#A2B0A8; --line:#2C3832;
+  --accent:#8CC4A7; --brass:#D6B074; --on-accent:#111714;
+  --era-1:#8CC4A7; --era-2:#D6B074; --era-3:#8FB2D3; --era-4:#ABAEDB;
+  color-scheme:dark;
+}
+html{font-size:var(--fs);scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:1rem;line-height:1.55}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--brass);outline-offset:3px;border-radius:.25rem}
+.wrap{max-width:68rem;margin:0 auto;padding:0 clamp(1rem,4vw,2.5rem)}
+
+/* Encabezado */
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:1.5rem 2rem;padding-top:clamp(1.75rem,5vw,3.25rem);padding-bottom:1.5rem}
+.top h1{font-family:var(--serif);font-weight:500;font-size:clamp(2.3rem,5.2vw,3.5rem);line-height:1.02;letter-spacing:-.015em;margin:0;font-variation-settings:"opsz" 72}
+.lede{margin:.8rem 0 0;max-width:36em;color:var(--muted);font-size:1.02rem}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:.45rem;padding:.2rem;background:var(--surface)}
+.seg button{border:0;background:none;padding:.45rem .9rem;border-radius:.3rem;cursor:pointer;font-size:.85rem}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);font-weight:700}
+.size{display:inline-flex;align-items:center;gap:.15rem;border:1px solid var(--line);border-radius:.45rem;padding:.2rem;background:var(--surface)}
+.size button{border:0;background:none;padding:.4rem .7rem;border-radius:.3rem;cursor:pointer;font-weight:700;font-size:.85rem}
+.size button:disabled{opacity:.35;cursor:default}
+.size output{font-size:.75rem;color:var(--muted);min-width:3.4rem;text-align:center;font-variant-numeric:tabular-nums}
+
+/* Cronograma */
+.chrono{padding-top:.5rem}
+.chrono-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:.5rem 2rem;border-top:2px solid var(--ink);padding-top:.9rem}
+.chrono-head h2{font-family:var(--serif);font-weight:500;font-size:1.45rem;margin:0}
+.chrono-head p{margin:0;color:var(--muted);font-size:.84rem;max-width:36em}
+.legend{display:flex;flex-direction:column;gap:.45rem;margin:.9rem 0 .6rem;font-size:.8rem;color:var(--muted)}
+.lg{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem}
+.lg.key{opacity:.95}
+.sw-bar{display:inline-block;width:1.1rem;height:.6rem;border:1.5px solid var(--muted);border-radius:2px}
+.legend span{display:inline-flex;align-items:center;gap:.45rem}
+.sw{width:1.1rem;height:.6rem;border-radius:2px;background:var(--c)}
+.sw-ms{width:.6rem;height:.6rem;border:2px solid var(--muted);transform:rotate(45deg);background:var(--surface)}
+.sw-dash{width:1.3rem;border-top:2px dashed var(--muted)}
+.gantt{--label-w:16.5rem;--gap:1rem;position:relative;margin-bottom:.5rem}
+.g-axis,.g-row{display:grid;grid-template-columns:var(--label-w) 1fr;column-gap:var(--gap)}
+.g-axis .g-track{height:1.6rem}
+.g-track{position:relative}
+.g-tick{position:absolute;bottom:.15rem;transform:translateX(-50%);font-size:.7rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.g-tick.today{color:var(--brass);font-weight:700}
+.g-grid{position:absolute;top:0;bottom:0;left:calc(var(--label-w) + var(--gap));right:0;pointer-events:none}
+.g-grid span{position:absolute;top:1.6rem;bottom:0;border-left:1px solid var(--line)}
+.g-grid span.today{border-left:2px solid var(--brass);opacity:.7}
+.g-row{position:relative;width:100%;background:none;border:0;padding:.28rem 0;text-align:left;cursor:pointer;align-items:center;border-radius:.35rem}
+.g-row:hover .g-name{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.18em}
+.g-row[aria-current="true"]{background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.g-row[aria-current="true"] .g-name{font-weight:700}
+.g-label{display:flex;gap:.55rem;align-items:baseline;font-size:.84rem;line-height:1.25;padding-left:.45rem}
+.g-num{color:var(--muted);min-width:1.2em;text-align:right;font-variant-numeric:tabular-nums}
+.g-row .g-track{height:1.85rem}
+.g-bar{position:absolute;top:50%;height:.8rem;margin-top:-.4rem;background:var(--era);border-radius:2px;transform-origin:left center}
+.g-vig{position:absolute;top:50%;border-top:2px dashed var(--era);opacity:.55}
+.g-ms{position:absolute;top:50%;width:.72rem;height:.72rem;background:var(--surface);border:2px solid var(--era);transform:translate(-50%,-50%) rotate(45deg)}
+.loaded .g-bar{animation:grow .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--k) * 70ms)}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* Detalle */
+main{padding-bottom:1rem}
+#detail{--era:var(--era-1);background:var(--surface);border:1px solid var(--line);border-top:.4rem solid var(--era);border-radius:.5rem;padding:clamp(1.25rem,3.4vw,2.6rem);margin-top:1.5rem}
+#detail.swap{animation:fade .22s ease-out}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.d-meta{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center;font-size:.82rem;color:var(--muted);margin:0 0 .9rem}
+.era-tag{color:var(--era);background:color-mix(in srgb,var(--era) 13%,transparent);padding:.15rem .7rem;border-radius:999px;font-weight:700}
+#detail h2{font-family:var(--serif);font-weight:500;font-size:clamp(2rem,4.4vw,3.1rem);line-height:1.06;letter-spacing:-.01em;margin:0;font-variation-settings:"opsz" 60}
+.d-sub{display:block;font-style:italic;font-size:1.05rem;color:var(--muted);margin-top:.35rem;font-family:var(--serif)}
+.d-period{margin:.7rem 0 0;font-size:.95rem;color:var(--muted)}
+.d-section h3{font-family:var(--sans);font-size:.88rem;font-weight:700;color:var(--era);margin:0 0 .45rem}
+.d-idea{margin-top:2.1rem}
+.lead{font-family:var(--serif);font-size:clamp(1.35rem,2.5vw,1.8rem);line-height:1.34;max-width:32em;margin:0}
+.d-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem 3rem;margin-top:2.1rem;padding-top:1.8rem;border-top:1px solid var(--line)}
+.d-grid p{margin:0;font-size:1.02rem;max-width:30em}
+.people{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.3rem}
+.people li{font-size:1.02rem}
+.people .q{color:var(--muted);font-style:italic;font-size:.88rem}
+.note{color:var(--muted);font-size:.9rem;margin:.65rem 0 0}
+.d-keys{margin-top:2.1rem;padding-top:1.8rem;border-top:1px solid var(--line)}
+.k-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem 2.2rem}
+.k-grid h4{font-family:var(--serif);font-weight:500;font-size:1.25rem;line-height:1.2;margin:0 0 .55rem}
+.k-grid ul{margin:0;padding-left:1.1rem}
+.k-grid li{font-size:.98rem;margin:.3rem 0}
+.xlink{background:none;border:0;padding:0;color:var(--accent);text-decoration:underline;text-underline-offset:.15em;cursor:pointer;font-size:.86rem}
+.d-vig{margin-top:2.1rem;background:color-mix(in srgb,var(--era) 8%,transparent);border-left:.3rem solid var(--era);padding:1.1rem 1.4rem;border-radius:0 .45rem .45rem 0}
+.d-vig p{font-size:1.12rem;margin:0;max-width:36em}
+.refs-sup{white-space:nowrap}
+.ref{font-family:var(--sans);font-size:.62em;vertical-align:super;line-height:0;background:none;border:0;padding:0 .12em;color:var(--accent);text-decoration:underline dotted;text-underline-offset:.15em;cursor:pointer}
+.ref:hover{text-decoration-style:solid}
+.d-ev{margin-top:2.2rem;border-top:1px solid var(--line);padding-top:.6rem}
+.d-ev summary{cursor:pointer;font-weight:700;font-size:.92rem;padding:.45rem 0;width:fit-content}
+.d-ev summary span{font-weight:400;color:var(--muted)}
+.d-ev .hint{font-size:.82rem;color:var(--muted);margin:.4rem 0 0;max-width:40em}
+.quote{margin:1.2rem 0 0;padding:.15rem 0 .15rem 1.1rem;border-left:2px solid var(--line)}
+.quote p{font-family:var(--serif);font-size:1rem;line-height:1.6;margin:0;max-width:42em}
+.q-meta{font-size:.76rem;color:var(--muted);margin-top:.4rem}
+.cited{margin:1.6rem 0 0;padding:1rem 0 0;border-top:1px dashed var(--line);list-style:none}
+.cited h4{font-size:.8rem;margin:0 0 .5rem;color:var(--muted);font-weight:700}
+.cited li{font-size:.84rem;margin:.35rem 0;padding:.2rem .4rem;border-radius:.3rem;transition:background-color .6s}
+.cited li.flash{background:color-mix(in srgb,var(--brass) 25%,transparent);transition:none}
+.cited b{font-variant-numeric:tabular-nums}
+.d-nav{display:flex;justify-content:space-between;gap:1rem;margin-top:2.2rem}
+.btn{border:1px solid var(--line);background:var(--paper);border-radius:.45rem;padding:.7rem 1.1rem;cursor:pointer;text-align:left;max-width:48%;font-size:.95rem;line-height:1.3}
+.btn small{display:block;color:var(--muted);font-size:.74rem;margin-bottom:.1rem}
+.btn.next{text-align:right;margin-left:auto}
+.btn:hover{border-color:var(--accent)}
+.kbd-hint{font-size:.74rem;color:var(--muted);text-align:center;margin:.9rem 0 0}
+
+/* Comparar */
+#compare{margin-top:1.5rem;background:var(--surface);border:1px solid var(--line);border-top:.4rem solid var(--ink);border-radius:.5rem;padding:clamp(1.25rem,3.4vw,2.6rem)}
+.c-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:1rem 2rem;margin-bottom:1.2rem}
+.c-head h2{font-family:var(--serif);font-weight:500;font-size:clamp(1.8rem,3.6vw,2.4rem);line-height:1.1;margin:0}
+.c-head p{margin:.4rem 0 0;color:var(--muted);font-size:.88rem}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;vertical-align:top;padding:.95rem .8rem;border-bottom:1px solid var(--line)}
+thead th{font-size:.78rem;color:var(--muted);font-weight:700;padding-top:0}
+tbody th{width:32%;font-weight:400}
+tbody th button{background:none;border:0;padding:0;cursor:pointer;text-align:left;display:flex;gap:.6rem;align-items:baseline;font-size:.98rem;line-height:1.3}
+tbody th button:hover span:last-child{text-decoration:underline;text-underline-offset:.18em}
+.dot{width:.65rem;height:.65rem;border-radius:2px;background:var(--era);flex:none;transform:translateY(.05rem)}
+tbody td{font-size:1.04rem;max-width:40em}
+
+/* Referencias y pie */
+.refs{margin-top:2rem}
+.refs details{border-top:2px solid var(--ink);padding-top:.7rem}
+.refs summary{cursor:pointer;font-family:var(--serif);font-size:1.3rem;width:fit-content}
+.refs ol{padding-left:2.2rem;margin:1rem 0 0}
+.refs li{font-size:.84rem;margin:.4rem 0;max-width:52em}
+.foot{padding-top:1.5rem;padding-bottom:3rem}
+.foot p{font-size:.76rem;color:var(--muted);margin:0;max-width:52em}
+
+@media (max-width:52rem){
+  .d-grid,.k-grid{grid-template-columns:1fr}
+  .gantt{--label-w:13rem}
+}
+@media (max-width:40rem){
+  .gantt{--label-w:0px;--gap:0px}
+  .g-axis,.g-row{grid-template-columns:1fr}
+  .g-axis>span:first-child{display:none}
+  .g-label{padding:.15rem .45rem 0}
+  .g-tick.odd{display:none}
+  .lg.key{border-left:0;padding-left:0}
+  .btn{max-width:none;flex:1}
+  .d-nav{flex-direction:column}
+  .btn.next{margin-left:0}
+  thead{display:none}
+  tbody tr{display:block;border-bottom:1px solid var(--line);padding:.8rem 0}
+  tbody th,tbody td{display:block;width:auto;border:0;padding:.2rem 0}
+  .kbd-hint{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .loaded .g-bar,#detail.swap{animation:none}
+  .cited li{transition:none}
+}
+</style>
+</head>
+<body>
+<header class="top wrap">
+  <div>
+    <h1>Enfoques de la administración</h1>
+    <p class="lede">Once escuelas de pensamiento ordenadas en el tiempo: cuándo surgieron, quiénes las impulsaron, qué proponen y por qué siguen vigentes.</p>
+  </div>
+  <div class="controls">
+    <div class="seg" role="group" aria-label="Vista">
+      <button type="button" id="v-detail" aria-pressed="true">Por enfoque</button>
+      <button type="button" id="v-compare" aria-pressed="false">Comparar</button>
+    </div>
+    <div class="size" role="group" aria-label="Tamaño de letra">
+      <button type="button" id="fs-down" aria-label="Reducir tamaño de letra">A−</button>
+      <output id="fs-out" aria-live="polite">100 %</output>
+      <button type="button" id="fs-up" aria-label="Aumentar tamaño de letra">A+</button>
+    </div>
+  </div>
+</header>
+
+<section class="wrap chrono" aria-labelledby="chrono-h">
+  <div class="chrono-head">
+    <h2 id="chrono-h">Cronograma de surgimiento</h2>
+    <p>Un diagrama al estilo de Henry L. Gantt, uno de los exponentes de la administración científica. Selecciona un enfoque para verlo en detalle.</p>
+  </div>
+  <div class="legend" id="legend"></div>
+  <div class="gantt" id="gantt"></div>
+</section>
+
+<main class="wrap">
+  <article id="detail" aria-live="polite"></article>
+  <section id="compare" hidden aria-labelledby="c-h">
+    <div class="c-head">
+      <div>
+        <h2 id="c-h">Comparar los once enfoques</h2>
+        <p>Elige una dimensión. Selecciona un enfoque para abrirlo en detalle.</p>
+      </div>
+      <div class="seg" role="group" aria-label="Dimensión" id="dims"></div>
+    </div>
+    <table>
+      <thead><tr><th scope="col">Enfoque</th><th scope="col" id="dim-col">Idea central</th></tr></thead>
+      <tbody id="c-body"></tbody>
+    </table>
+  </section>
+</main>
+
+<section class="wrap refs">
+  <details>
+    <summary>Referencias del cuadro <span id="ref-count"></span></summary>
+    <ol id="ref-list"></ol>
+  </details>
+</section>
+
+<footer class="wrap foot">
+  <p>Fuente: cuadro “Enfoques de administración”, ampliado con el enfoque de roles gerenciales y configuraciones de Henry Mintzberg (referencias 23 a 29). Las posiciones del cronograma son aproximadas y se derivan de las fechas del propio cuadro; la agrupación por etapas es un recurso de lectura.</p>
+</footer>
+
+<script type="application/json" id="data">{"approaches": [{"slug": "cientifica", "era": 1, "period": "Finales del siglo XIX a 1911", "start": 1880, "end": 1911, "ms": [[1911, "Taylor publica sus principios (1911)"]], "people": [["Frederick W. Taylor", ""], ["Frank y Lillian Gilbreth", ""], ["Henry L. Gantt", ""]], "note": "La tradición clásica incluye también a Henri Fayol y Max Weber.", "name": "Administración científica", "sub": "escuela clásica", "surg": {"text": "Finales del siglo XIX; se consolida con la publicación de Taylor en 1911.", "refs": [1]}, "expo": {"text": "Frederick W. Taylor; Frank y Lillian Gilbreth; Henry L. Gantt. La tradición clásica incluye también a Henri Fayol y Max Weber.", "refs": [2]}, "idea": {"text": "Estudiar y estandarizar tareas para elevar productividad y eficiencia; separar diseño y supervisión del trabajo de su ejecución.", "refs": [3]}, "vig": {"text": "Influye en medición de procesos, estandarización y operaciones; requiere equilibrarse con autonomía y factores humanos.", "refs": [3]}, "evidence": [{"ref": 1, "text": "Das 1911 erschienene populäre Werk, eine Zusammenfassung und Weiterführung verschiedener Vorträge und Arbeitspapiere, mit denen Taylor schon vorher in der Öffentlichkeit bekannt geworden war, wurde in zahlreiche Sprachen übersetzt und begründete die nach Taylor benannten Prinzipien der Produktionsorganisation.", "fields": ["Surgimiento"]}, {"ref": 2, "text": "The dynamic of corporate governance has evolved successfully in the business world to the mercy of the market, environment and society, where different theories have been developed for implementation, being the intention of this I articulate didactically to review and to present/display the different theories in the application from the enterprise organizations, like the scientist by Frederick W. Taylor, Henry L. William Gantt and Frank and Gilbreth, the functional, Henry Fayol, structural, Max Weber, Human Relations, Elton Mayo, Abraham Maslow.", "fields": ["Exponentes"]}, {"ref": 3, "text": "The results indicate that Taylor’s theory emphasizes work efficiency through standardization and scientific supervision, while Fayol’s theory highlights the importance of managerial functions and structured organizational principles.", "fields": ["Idea central"]}, {"ref": 3, "text": "Both responded to managerial challenges during the Industrial Revolution and remain relevant today, particularly in human resource management and organizational structure.", "fields": ["Vigencia actual"]}]}, {"slug": "funcional", "era": 1, "period": "Comienzos del siglo XX (1916)", "start": 1900, "end": 1916, "ms": [[1916, "Fayol define las funciones administrativas (1916)"]], "people": [["Henri Fayol", ""], ["Lyndall Urwick", "desarrollador posterior"], ["Luther Gulick", "desarrollador posterior"]], "note": "", "name": "Administración general/funcional", "sub": "", "surg": {"text": "Comienzos del siglo XX; referencia clave: publicación de Fayol en 1916.", "refs": [4]}, "expo": {"text": "Henri Fayol; Lyndall Urwick y Luther Gulick como desarrolladores posteriores.", "refs": [2]}, "idea": {"text": "Funciones y principios generales para coordinar la organización; Fayol formuló planear, organizar, dirigir, coordinar y controlar.", "refs": [4]}, "vig": {"text": "Proporciona un marco práctico para estructurar responsabilidades y funciones directivas.", "refs": [4]}, "evidence": [{"ref": 4, "text": "In 1916 he defined management as “to manage is to forecast and plan, to organise, to command (direct), to co-ordinate and to control”.", "fields": ["Surgimiento", "Idea central"]}, {"ref": 2, "text": "The dynamic of corporate governance has evolved successfully in the business world to the mercy of the market, environment and society, where different theories have been developed for implementation, being the intention of this I articulate didactically to review and to present/display the different theories in the application from the enterprise organizations, like the scientist by Frederick W. Taylor, Henry L. William Gantt and Frank and Gilbreth, the functional, Henry Fayol, structural, Max Weber, Human Relations, Elton Mayo, Abraham Maslow.", "fields": ["Exponentes"]}, {"ref": 4, "text": "Although his definition was proposed 89 years ago, it remains the most widely cited. His five functions of management have had a profound impact on management thinking and practice over the years and has been a foundation upon which other management thinkers have built their theories and models. …", "fields": ["Vigencia actual"]}]}, {"slug": "burocratica", "era": 1, "period": "Principios del siglo XX", "start": 1900, "end": 1925, "ms": [], "people": [["Max Weber", ""], ["Henri Fayol", "en la tradición estructural"]], "note": "", "name": "Burocrático-estructural", "sub": "", "surg": {"text": "Principios del siglo XX; desarrollo dentro de la escuela clásica.", "refs": [5]}, "expo": {"text": "Max Weber; en la tradición estructural, también Henri Fayol.", "refs": [2]}, "idea": {"text": "Organización formal con autoridad, reglas, especialización y procedimientos definidos.", "refs": [5]}, "vig": {"text": "Sostiene consistencia, rendición de cuentas y cumplimiento en organizaciones grandes o reguladas; el exceso de reglas puede volverla rígida.", "refs": [5]}, "evidence": [{"ref": 5, "text": "These phases are; Taylor, Fayol and Weber composing Classic Term; Mayo theory, Hawthorne experiments composing Neo-classic Term and Modern Approaches.", "fields": ["Surgimiento", "Idea central", "Vigencia actual"]}, {"ref": 2, "text": "The dynamic of corporate governance has evolved successfully in the business world to the mercy of the market, environment and society, where different theories have been developed for implementation, being the intention of this I articulate didactically to review and to present/display the different theories in the application from the enterprise organizations, like the scientist by Frederick W. Taylor, Henry L. William Gantt and Frank and Gilbreth, the functional, Henry Fayol, structural, Max Weber, Human Relations, Elton Mayo, Abraham Maslow.", "fields": ["Exponentes"]}]}, {"slug": "relaciones-humanas", "era": 2, "period": "Décadas de 1920 y 1930", "start": 1920, "end": 1939, "ms": [], "people": [["Elton Mayo", ""], ["Mary Parker Follett", ""], ["Abraham Maslow", ""], ["Douglas McGregor", ""], ["Frederick Herzberg", ""]], "note": "", "name": "Relaciones humanas y conductual", "sub": "", "surg": {"text": "Décadas de 1920–1930; toma impulso con los estudios de Hawthorne.", "refs": [6]}, "expo": {"text": "Elton Mayo; Mary Parker Follett; Abraham Maslow; Douglas McGregor; Frederick Herzberg.", "refs": [2]}, "idea": {"text": "Subraya necesidades sociales, grupos informales, motivación y conducta de las personas en el trabajo.", "refs": [7]}, "vig": {"text": "Informa liderazgo, compromiso, diseño del trabajo, comunicación y clima de equipo.", "refs": [6]}, "evidence": [{"ref": 6, "text": "El sexto capitulo trata de explicar los experimentos en la Western Electric, la motivacion que los lleva a desarrollarlos, su ejecucion, los cambios que se producen en medio de las experiencias diarias, las conclusiones y los aportes que enmarca este importante momento dentro de la historia de las relaciones humanas.", "fields": ["Surgimiento"]}, {"ref": 6, "text": "The sixth chapter explains the approaches to research at Western Electric, the motivation that leads to development it, implementation, the changes that occur in the midst of everyday experiences, and his major findings and contributions to Human relations Movement. This document also describes when Elton arrived in America, Its Economic and working conditions. Additionally, introduces the reader to the “Hawthorne experiment” and its conclusions, through the stages of implementation.", "fields": ["Surgimiento"]}, {"ref": 2, "text": "The dynamic of corporate governance has evolved successfully in the business world to the mercy of the market, environment and society, where different theories have been developed for implementation, being the intention of this I articulate didactically to review and to present/display the different theories in the application from the enterprise organizations, like the scientist by Frederick W. Taylor, Henry L. William Gantt and Frank and Gilbreth, the functional, Henry Fayol, structural, Max Weber, Human Relations, Elton Mayo, Abraham Maslow. Douglas McGregor. Mary Parker Follett, Frederick Herzberg.", "fields": ["Exponentes"]}, {"ref": 7, "text": "This body of theory and practice is popularly associated with the sociologist Elton Mayo (1880–1949), whose basic idea was that workers had strong social needs which they tried to satisfy through membership of informal social groups at the workplace.", "fields": ["Idea central"]}, {"ref": 6, "text": "These findings may be taken as inputs to the current business environment and generate discussions on current or not the proposals of Dr. Mayo. Finally it is intended to lay down the foundations for new work around, not just this school but a new integration that is able to combine scientific advances in the industry with a dignified and inclusive human factor, which has recently been gaining ground in the competitive differentiation that gives companies the value on those who do not.", "fields": ["Vigencia actual"]}]}, {"slug": "sistemico", "era": 3, "period": "Décadas de 1950 y 1960", "start": 1950, "end": 1969, "ms": [[1951, "Bertalanffy, teoría general de sistemas (1951)"], [1964, "Johnson, Kast y Rosenzweig la aplican a la administración (1964)"]], "people": [["Ludwig von Bertalanffy", ""], ["Kenneth Boulding", ""], ["Richard A. Johnson", "en administración"], ["Fremont E. Kast", "en administración"], ["James E. Rosenzweig", "en administración"]], "note": "", "name": "Sistémico", "sub": "", "surg": {"text": "Décadas de 1950–1960; aplicación explícita de la teoría general de sistemas a la administración en los años sesenta.", "refs": [8]}, "expo": {"text": "Ludwig von Bertalanffy; Kenneth Boulding; en administración, Richard A. Johnson, Fremont E. Kast y James E. Rosenzweig.", "refs": [8]}, "idea": {"text": "La organización se analiza como sistema de partes interdependientes y en relación con su entorno.", "refs": [8]}, "vig": {"text": "Ayuda a comprender impactos entre áreas, coordinación, flujos de información y adaptación organizacional.", "refs": [8]}, "evidence": [{"ref": 8, "text": "Ludwig von Bertalanffy, in 1951, and Kenneth Boulding, in 1956, wrote articles which have provided a modern foundation for general systems theory [Bertalanffy, L. von. 1951. General system theory: A new approach to unity of science. Human Biol. December 303--361; Boulding, K. 1956. General systems theory: The skeleton of science. Management Sci. April 197--208.]. We build on that foundation in applying general systems theory to management.", "fields": ["Surgimiento"]}, {"ref": 8, "text": "Ludwig von Bertalanffy, in 1951, and Kenneth Boulding, in 1956, wrote articles which have provided a modern foundation for general systems theory [Bertalanffy, L. von. 1951. General system theory: A new approach to unity of science. Human Biol. December 303--361; Boulding, K. 1956. General systems theory: The skeleton of science. Management Sci. April 197--208.]. We build on that foundation in applying general systems theory to management. The general theory is reviewed for the reader. Next, it is applied as a theory for business, and an illustrative model of the systems concept is developed to show the business application.", "fields": ["Exponentes"]}, {"ref": 8, "text": "We build on that foundation in applying general systems theory to management. The general theory is reviewed for the reader. Next, it is applied as a theory for business, and an illustrative model of the systems concept is developed to show the business application. Finally, the systems concept is related to the traditional functions of a business, i.e., planning, organizing, control, and communications.", "fields": ["Idea central"]}, {"ref": 8, "text": "Next, it is applied as a theory for business, and an illustrative model of the systems concept is developed to show the business application. Finally, the systems concept is related to the traditional functions of a business, i.e., planning, organizing, control, and communications.", "fields": ["Vigencia actual"]}]}, {"slug": "contingencial", "era": 3, "period": "Décadas de 1960 y 1970", "start": 1960, "end": 1979, "ms": [[1961, "Burns y Stalker publican su teoría (1961)"]], "people": [["Joan Woodward", ""], ["Tom Burns y G. M. Stalker", ""], ["Paul Lawrence y Jay Lorsch", ""], ["Fred Fiedler", ""], ["Henry Mintzberg", "configuraciones estructurales", "mintzberg"]], "note": "", "name": "Contingencial o situacional", "sub": "", "surg": {"text": "Década de 1960; se consolida como escuela en los años sesenta y setenta.", "refs": [9]}, "expo": {"text": "Joan Woodward; Tom Burns y G. M. Stalker; Paul Lawrence y Jay Lorsch; Fred Fiedler.", "refs": [9, 24]}, "idea": {"text": "No hay una única forma óptima de administrar: la estructura y las prácticas dependen de la situación y del entorno.", "refs": [10]}, "vig": {"text": "Promueve ajustar estructura, liderazgo y controles a incertidumbre, tecnología, tamaño y tarea.", "refs": [11]}, "evidence": [{"ref": 9, "text": "Since the theory’s original publication in 1961 by Tavistock, Tom Burns (in Burns and Stalker 1994) has credited his theory with close parallels to the theoretical positions developed by Woodward (see Miner 2002a) regarding various technologies, to Crozier’s (1964) analyses of political processes in bureaucracies, and to March and Simon’s (see Chapter 3 in this volume) treatment of programmed and nonprogrammed decision making. Yet Burns indicated that at the time of its formulation the theory was uninformed from any of these sources. It does, however, appear to be a product of many forces that were “in the air” during the 1950s and early 1960s when the theory was developed, particularly forces of this kind that existed in the social science intellectual community of Europe.", "fields": ["Surgimiento"]}, {"ref": 9, "text": "Since the theory’s original publication in 1961 by Tavistock, Tom Burns (in Burns and Stalker 1994) has credited his theory with close parallels to the theoretical positions developed by Woodward (see Miner 2002a) regarding various technologies, to Crozier’s (1964) analyses of political processes in bureaucracies, and to March and Simon’s (see Chapter 3 in this volume) treatment of programmed and nonprogrammed decision making.", "fields": ["Exponentes"]}, {"ref": 10, "text": "Singly, none of these theories can be applied to every organization and management problem, and currently a theory is emerging that can be used to draw the disparate elements together. This new approach is the contingency theory of management, which can be applied situationally.", "fields": ["Idea central"]}, {"ref": 11, "text": "The managers should reconcile conflicts among interest groups to be able to carry out their policies and operating plans which are contingent to the situation. The managers with bounded rationality2 cannot reach the best policy, but they are making up better policies enough to satisfy the expectation of them. In those processes, to adapt to the environment effectively and efficiently, they should take advantage of systems approach and contingency view3 as managing tools.", "fields": ["Vigencia actual"]}]}, {"slug": "mintzberg", "era": 3, "name": "Roles gerenciales y configuraciones", "sub": "enfoque de Henry Mintzberg", "period": "Década de 1970 (1973) y desarrollo posterior", "start": 1973, "end": 1998, "ms": [[1973, "La naturaleza del trabajo directivo (1973)"], [1979, "La estructuración de las organizaciones (1979)"], [1985, "Estrategias deliberadas y emergentes (1985)"]], "surg": {"text": "Década de 1970; surge de la observación directa del trabajo de cinco directores generales, publicada por Mintzberg en 1973, y se amplía con su síntesis sobre estructura organizacional de 1979. Koontz lo reconoce en 1980 como el enfoque de los roles gerenciales.", "refs": [23, 24, 25]}, "expo": {"text": "", "refs": [23, 26, 28]}, "people": [["Henry Mintzberg", ""], ["Sune Carlson", "precursor: estudio con diarios de ejecutivos"], ["Rosemary Stewart", "precursora: estudios del trabajo gerencial"], ["James A. Waters", "coautor en estrategia emergente"], ["Bruce Ahlstrand y Joseph Lampel", "coautores de Strategy Safari"]], "note": "", "idea": {"text": "Describe lo que los directivos realmente hacen —un trabajo breve, fragmentado y predominantemente verbal— en lugar de lo que prescriben las funciones clásicas; lo ordena en diez roles, entiende la estructura como configuraciones coherentes y la estrategia como un patrón que también emerge de la acción.", "refs": [23, 24, 26]}, "vig": {"text": "Sustenta la formación directiva basada en la práctica y la reflexión, el diseño organizacional por configuraciones y una planeación estratégica que combina la intención con el aprendizaje emergente; su crítica a la planeación rígida y a la formación MBA convencional sigue abierta al debate.", "refs": [27, 28, 29]}, "keys": [{"title": "Diez roles directivos", "refs": [23], "items": [["Interpersonales:", "representante, líder y enlace."], ["Informativos:", "monitor, difusor y portavoz."], ["Decisorios:", "emprendedor, gestor de anomalías, asignador de recursos y negociador."]]}, {"title": "Cinco configuraciones", "refs": [24], "items": [["", "Estructura simple"], ["", "Burocracia maquinal"], ["", "Burocracia profesional"], ["", "Forma divisional"], ["", "Adhocracia"]]}, {"title": "Tipos de estrategia", "refs": [26], "items": [["Pretendida:", "el plan formulado."], ["Deliberada:", "la parte del plan que se realiza."], ["Emergente:", "patrones que surgen de la acción sin haberse planeado."], ["Realizada:", "el resultado conjunto de lo deliberado y lo emergente."]]}], "evidence": [], "evNote": "Este enfoque se incorporó al cuadro original. Sus afirmaciones remiten a las obras de referencia y no incluye fragmentos textuales de las fuentes."}, {"slug": "estrategico", "era": 3, "period": "Desde 1954 y durante la segunda mitad del siglo XX", "start": 1954, "end": 1999, "ms": [[1954, "Drucker: administración por objetivos (1954)"]], "people": [["Peter Drucker", ""], ["Michael Porter", ""], ["Jay Barney", ""], ["David Teece", ""], ["Henry Mintzberg", "estrategia emergente y escuelas de la estrategia", "mintzberg"]], "note": "", "name": "Estratégico y basado en recursos", "sub": "", "surg": {"text": "Administración por objetivos: 1954; estrategia competitiva y capacidades dinámicas se desarrollan como marcos de gestión en la segunda mitad del siglo XX.", "refs": [12, 13]}, "expo": {"text": "Peter Drucker; Michael Porter; Jay Barney; David Teece.", "refs": [14, 13, 26, 28]}, "idea": {"text": "Alinea objetivos, análisis competitivo y recursos/capacidades para sostener desempeño; las capacidades dinámicas permiten reconfigurar recursos e innovar.", "refs": [13]}, "vig": {"text": "Guía prioridades, ventajas competitivas, adaptación e innovación ante cambios del mercado y la tecnología.", "refs": [14]}, "evidence": [{"ref": 12, "text": "This chapter considers the emergence in 1954 and the evolution of Peter F. Drucker’s Management by Objectives—MbO—into what he termed a principle of management.", "fields": ["Surgimiento"]}, {"ref": 13, "text": "David Teece was the pioneer of the dynamic capabilities perspective. It is grounded in 25 years of his research, teaching, and consultancy. His ideas have been influential in business strategy, management, and economics, and are relevant to innovation, technology management, and competition policy.", "fields": ["Surgimiento", "Exponentes"]}, {"ref": 14, "text": "The research emphasizes traditional management theories by linking Taylor’s Scientific Management and Fayol’s Administrative Principles to modern behavioral theories including Human Relations Movement and Maslow’s Hierarchy of Needs and McGregor’s Theory X and Theory Y. The research investigates strategic management frameworks especially Porter’s Five Forces and the Resource-Based View in detail to determine their capacity to resolve organizational difficulties.", "fields": ["Exponentes"]}, {"ref": 13, "text": "An increasingly powerful answer to these fundamental questions of business strategy lies in the concept of dynamic capabilities. These are the skills, processes, routines, organizational structures, and disciplines that enable firms to build, employ, and orchestrate intangible assets relevant to satisfying customer needs, and which cannot be readily replicated by competitors. Enterprises with strong dynamic capabilities are intensely entrepreneurial. They not only adapt to business ecosystems; they also shape them through innovation, collaboration, learning, and involvement.", "fields": ["Idea central"]}, {"ref": 14, "text": "The research investigates strategic management frameworks especially Porter’s Five Forces and the Resource-Based View in detail to determine their capacity to resolve organizational difficulties. This analysis explores both the timeless value of management principles and the requirement to adjust them according to current global market shifts alongside technology progress and temporary staffing practices.", "fields": ["Vigencia actual"]}]}, {"slug": "calidad-total", "era": 3, "period": "Desde la década de 1920; TQM a mediados de los ochenta", "start": 1920, "end": 1989, "ms": [[1985, "El término TQM se generaliza (mediados de los ochenta, aprox.)"]], "people": [["Walter A. Shewhart", ""], ["W. Edwards Deming", ""], ["Joseph Juran", ""], ["Armand Feigenbaum", ""], ["Kaoru Ishikawa", ""], ["Taiichi Ohno", ""]], "note": "", "name": "Calidad total y mejora continua", "sub": "incluye Lean", "surg": {"text": "Control estadístico de calidad desde la década de 1920; el término TQM se generaliza a mediados/finales de los años ochenta; Lean evoluciona desde la producción japonesa de posguerra.", "refs": [15, 16]}, "expo": {"text": "Walter A. Shewhart; W. Edwards Deming; Joseph Juran; Armand Feigenbaum; Kaoru Ishikawa; Taiichi Ohno.", "refs": [15, 17]}, "idea": {"text": "Mejorar continuamente calidad y procesos mediante enfoque al cliente, prevención de defectos, participación del personal y reducción de desperdicio.", "refs": [17]}, "vig": {"text": "Se aplica para elevar calidad, productividad y consistencia; puede integrarse con datos y tecnologías digitales.", "refs": [17]}, "evidence": [{"ref": 15, "text": "TQM started to be used in the mid‐1980s and only became a recognised part of the quality‐related language in the late 1980s.", "fields": ["Surgimiento"]}, {"ref": 16, "text": "Lean management is the culmination of years of continuous improvement in the field of industrial engineering and management. The creation of Lean has been an incredible example of continuous improvement on a global scale and requires the balance of both a rational scientific approach and a people-based humanistic approach to reach a sustainable system that provides companies a strong competitive advantage. Many of the key aspects of Lean management theory are based on the positive contributions of the understandings. Total quality management (TQM) has many of the sound principles included in Lean. TQM also suffered from many of the same problems that exist in trying to implement Lean. Many credit Deming’s seminal book Out of the Crisis and the several points as the kickoff of the TQM movement.", "fields": ["Surgimiento"]}, {"ref": 15, "text": "Feigenbaum and Ishikawa are perhaps the greatest contributors to the development of the term. The other recognised quality management gurus such as Crosby, Deming and Juran have shaped the dimensions, practices and mechanism which underpin the concept, but it is noted that none of these three actually uses the TQM term.", "fields": ["Exponentes"]}, {"ref": 17, "text": "Classic contributions by Deming, Juran, Crosby, Ishikawa, Ohno and Womack and Jones are considered alongside later empirical and review studies.", "fields": ["Exponentes"]}, {"ref": 17, "text": "TQM places emphasis on customer requirements, prevention of defects, employee involvement, leadership commitment and continuous improvement, while Lean Management concentrates on customer value, elimination of non-value-adding activities, smooth flow, pull-based operations and the systematic pursuit of perfection.", "fields": ["Idea central"]}, {"ref": 17, "text": "The literature indicates that successful implementation depends less on isolated tools and more on leadership, organisational culture, employee capability, supplier involvement, process discipline and continuous improvement. Recent research further connects these approaches with Industry 4.0 and Quality 4.0, suggesting that digital technologies can strengthen data-driven improvement when the underlying management system is mature. The paper concludes that TQM and Lean should not be treated as competing philosophies; rather, they can be viewed as complementary approaches for building a quality-oriented and waste-conscious operating system.", "fields": ["Vigencia actual"]}]}, {"slug": "agil", "era": 4, "period": "Desde 2001", "start": 2001, "end": 2026, "ms": [[2001, "Manifiesto Ágil (2001)"]], "people": [["Jeff Sutherland y Ken Schwaber", "Scrum"], ["Kent Beck y otros firmantes del Manifiesto Ágil", ""]], "note": "No tiene un único fundador.", "name": "Ágil", "sub": "", "surg": {"text": "2001, con el Manifiesto Ágil en desarrollo de software; su difusión a la gestión organizacional es posterior.", "refs": [18]}, "expo": {"text": "Jeff Sutherland y Ken Schwaber (Scrum); Kent Beck y otros firmantes del Manifiesto Ágil; no tiene un único fundador.", "refs": [19]}, "idea": {"text": "Ciclos iterativos, retroalimentación frecuente, colaboración y adaptación frente a planificación rígida.", "refs": [18]}, "vig": {"text": "Útil en trabajo con incertidumbre y cambio rápido; puede combinarse con planificación y controles tradicionales según el contexto.", "refs": [20]}, "evidence": [{"ref": 18, "text": "Although its origins can be traced back to the Agile Manifesto from 2001 in software development, agile management has since extenden to various sectors and is now recognized as a strategic capability. Unlike traditional management approaches, which are characterized by stability, hierarchical structures, and rigid planning, agile management focuses on flexibility, rapid adaptation, and continuous improvement. This paper discusses the conceptual foundations of agile management, its distinctions from classical management approaches, its core principles, its relationship with organizational transformation, and contemporary trends in the literature.", "fields": ["Surgimiento"]}, {"ref": 19, "text": "This chapter introduces the main ideas that form the basis for the agile approach.", "fields": ["Exponentes"]}, {"ref": 18, "text": "Unlike traditional management approaches, which are characterized by stability, hierarchical structures, and rigid planning, agile management focuses on flexibility, rapid adaptation, and continuous improvement. This paper discusses the conceptual foundations of agile management, its distinctions from classical management approaches, its core principles, its relationship with organizational transformation, and contemporary trends in the literature.", "fields": ["Idea central"]}, {"ref": 20, "text": "Comprehensive analysis of the evolution of theoretical and methodological foundations of project management focuses on studying the historical development of the discipline, starting from classical approaches (such as Gantt charts and network planning) and ending with modern agile and hybrid models (Agile, Scrum, organizational ambidexterity), both in the context of global standards (PMI, IPMA) and within domestic practice. The main task is not only to trace this evolution but also to identify its dependence on technological changes, primarily digital transformation. Special attention is paid to a deep analysis of the factors contributing to the successful implementation of digital projects. In this regard, the research goes beyond traditional management metrics (time, budget, quality) and concentrates on alternative, poorly managed factors that critically affect the outcome. Such factors include cognitive biases of the manager and the team (for example, planning fallacy or confirmation bias) and the level of uncertainty inherent in a highly dynamic digital environment. Thus, the subject of the research encompasses the transition from rational, plan-oriented theories to models that consider the irrationality of the human factor and the instability of the external environment.", "fields": ["Vigencia actual"]}]}, {"slug": "stakeholders", "era": 4, "period": "Desde 1984", "start": 1984, "end": 2026, "ms": [[1984, "Freeman articula el enfoque de stakeholders (1984)"], [1994, "Elkington acuña el triple resultado (1994)"]], "people": [["R. Edward Freeman", ""], ["John Elkington", "posteriormente, triple resultado: personas, planeta y prosperidad"]], "note": "", "name": "Stakeholders y sostenibilidad", "sub": "", "surg": {"text": "Enfoque de stakeholders articulado por R. Edward Freeman en 1984; la sostenibilidad organizacional se amplía desde entonces.", "refs": [21]}, "expo": {"text": "R. Edward Freeman; posteriormente, John Elkington en el enfoque de triple resultado (personas, planeta y prosperidad).", "refs": [21, 22]}, "idea": {"text": "Considera a los grupos que afectan o son afectados por los objetivos de la organización, no solo a los accionistas.", "refs": [21]}, "vig": {"text": "Integra las perspectivas de stakeholders con dimensiones económicas, sociales y ambientales (triple resultado, término acuñado en 1994).", "refs": [21, 22]}, "evidence": [{"ref": 21, "text": "Interest in stakeholder theory has grown considerably since Freeman (1984) fully articulated a stakeholder framework in his seminal work Strategic Management: A Stakeholder Approach. Freeman drew on a variety of studies to develop his stakeholder approach. Using corporate planning, systems theory and Corporate Social Responsibility (CSR), he argued that existing management theories were not prepared enough to address “the quantity and kinds of change which are occurring in the business environment” (Freeman 1984, p. 5). Freeman defined a stakeholder as “any group or individual who can affect or is affected by the achievement of the organization’s objectives” (Freeman 1984, p. 46).", "fields": ["Surgimiento", "Exponentes"]}, {"ref": 22, "text": "In 1994, the author coined the term triple bottom line.", "fields": ["Exponentes", "Vigencia actual"]}, {"ref": 21, "text": "Using corporate planning, systems theory and Corporate Social Responsibility (CSR), he argued that existing management theories were not prepared enough to address “the quantity and kinds of change which are occurring in the business environment” (Freeman 1984, p. 5). Freeman defined a stakeholder as “any group or individual who can affect or is affected by the achievement of the organization’s objectives” (Freeman 1984, p. 46).", "fields": ["Idea central", "Vigencia actual"]}]}], "refs": {"1": {"short": "Bögenhold, 2020", "title": "Taylor, Frederick Winslow: The Principles of Scientific Management."}, "2": {"short": "Palma & Gaspar, 2011", "title": "La gestión empresarial, un enfoque del siglo XX, desde las teorías administrativas científica, funcional, burocrática y de relaciónes humanas The enterprise management, an approach of century XX, from the theories administrative scientific, functional, bureaucratic and of human relations."}, "3": {"short": "Janah et al., 2025", "title": "Revolusi Industri, Teori Taylor, dan Teori Fayol. Jurnal Ilmu Pendidikan."}, "4": {"short": "McLean, 2005", "title": "Management Techniques and Theories."}, "5": {"short": "Çelik, 2011", "title": "A Theoretical Approach to the Science of Management."}, "6": {"short": "Henao & Eduardo, 2019", "title": "Escuela de las relaciones humanas en la administración: los trabajos del Elton Mayo = The human relations school in administration: the work of Elton Mayo."}, "7": {"short": "Kelly, 2015", "title": "Human Relations Movement."}, "8": {"short": "Johnson et al., 1964", "title": "Systems Theory and Management. Management Science."}, "9": {"short": "Miner, 2015", "title": "Mechanistic and Organic Systems: Tom Burns, G.M. Stalker."}, "10": {"short": "Luthans, 1973", "title": "The contingency theory of management: A path out of the jungle. Business Horizons."}, "11": {"short": "Sugihara & Ichikawa, 1983", "title": "THE SYSTEMS APPROACH AND CONTINGENCY VIEW IN MANAGERIAL BEHAVIOR AND MANAGEMENT ORGANIZATION."}, "12": {"short": "Starbuck, 2017", "title": "Peter F. Drucker’s Management by Objectives and Self-Control."}, "13": {"short": "Teece, 2009", "title": "Dynamic Capabilities and Strategic Management: Organizing for Innovation and Growth."}, "14": {"short": "Jakhongir, 2025", "title": "The Evolution of Management Theory: A Literature Review. Academia Open."}, "15": {"short": "Martinez-Lorente et al., 1998", "title": "Total quality management: origins and evolution of the term. The Tqm Magazine."}, "16": {"short": "Protzman et al., 2018", "title": "Brief History of Lean. The Lean Practitioner’s Field Book."}, "17": {"short": "Gawade et al., 2026", "title": "Review of Literature on TQM and LEAN Management. International Journal of Science, Strategic Management and Technology."}, "18": {"short": "Başaran & Çelikkol, 2025", "title": "A View of Agile Management: A Bibliometric Analysis. ASSAM Uluslararası Hakemli Dergi."}, "19": {"short": "Hazzan & Dubinsky, 2014", "title": "The Agile Manifesto."}, "20": {"short": "Parfentev, 2025", "title": "The history of the development of project management theory: from classics to agile approaches. Финансы и управление."}, "21": {"short": "Kivits & Sawang, 2021", "title": "Stakeholder Theory. Contributions to Management Science."}, "22": {"short": "Elkington, 2013", "title": "Enter the Triple Bottom Line."}, "23": {"short": "Mintzberg, 1973", "title": "The Nature of Managerial Work. Harper & Row."}, "24": {"short": "Mintzberg, 1979", "title": "The Structuring of Organizations: A Synthesis of the Research. Prentice-Hall."}, "25": {"short": "Koontz, 1980", "title": "The Management Theory Jungle Revisited. Academy of Management Review, 5(2), 175–187."}, "26": {"short": "Mintzberg & Waters, 1985", "title": "Of Strategies, Deliberate and Emergent. Strategic Management Journal, 6(3), 257–272."}, "27": {"short": "Mintzberg, 1994", "title": "The Rise and Fall of Strategic Planning. Free Press."}, "28": {"short": "Mintzberg et al., 1998", "title": "Strategy Safari: A Guided Tour Through the Wilds of Strategic Management. Free Press."}, "29": {"short": "Mintzberg, 2004", "title": "Managers, Not MBAs: A Hard Look at the Soft Practice of Managing and Management Development. Berrett-Koehler."}}, "eras": {"1": "Escuela clásica", "2": "Escuela humanista", "3": "Enfoques modernos", "4": "Enfoques contemporáneos"}}</script>
+<script>
+(function(){
+  const D = JSON.parse(document.getElementById('data').textContent);
+  const A = D.approaches, REFS = D.refs, ERAS = D.eras;
+  const MIN = 1880, MAX = 2030, TODAY = 2026;
+  const pct = y => ((y - MIN) / (MAX - MIN) * 100);
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const eraVar = n => `var(--era-${n})`;
+  const DIMS = [['idea','Idea central'],['surg','Surgimiento'],['expo','Exponentes'],['vig','Vigencia actual']];
+
+  const store = {
+    get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+    set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+  };
+  const state = { i: 0, view: 'detail', dim: 'idea' };
+
+  /* Leyenda */
+  document.getElementById('legend').innerHTML =
+    `<div class="lg">` + Object.entries(ERAS).map(([n,t]) => `<span><i class="sw" style="--c:${eraVar(n)}"></i>${esc(t)}</span>`).join('') + `</div>` +
+    `<div class="lg key"><span><i class="sw-bar"></i>Periodo de origen</span>` +
+    `<span><i class="sw-ms"></i>Hito</span>` +
+    `<span><i class="sw-dash"></i>Vigencia hasta hoy</span></div>`;
+
+  /* Cronograma */
+  function buildGantt(){
+    const g = document.getElementById('gantt');
+    const ticks = []; for (let y = 1880; y <= 2020; y += 20) ticks.push(y);
+    let html = '<div class="g-grid" aria-hidden="true">' +
+      ticks.map(y => `<span style="left:${pct(y)}%"></span>`).join('') +
+      `<span class="today" style="left:${pct(TODAY)}%"></span></div>`;
+    html += '<div class="g-axis" aria-hidden="true"><span></span><div class="g-track">' +
+      ticks.filter(y => y < 2020).map((y,k) => `<span class="g-tick${k % 2 ? ' odd' : ''}" style="left:${pct(y)}%">${y}</span>`).join('') +
+      `<span class="g-tick today" style="left:${pct(TODAY)}%">Hoy</span></div></div>`;
+    A.forEach((a, i) => {
+      const bar = `<span class="g-bar" style="left:${pct(a.start)}%;width:${pct(a.end) - pct(a.start)}%;--k:${i}"></span>`;
+      const vig = a.end < TODAY ? `<span class="g-vig" style="left:${pct(a.end)}%;width:${pct(TODAY) - pct(a.end)}%"></span>` : '';
+      const ms = a.ms.map(m => `<span class="g-ms" style="left:${pct(m[0])}%" title="${esc(m[1])}"></span>`).join('');
+      html += `<button type="button" class="g-row" data-i="${i}" style="--era:${eraVar(a.era)}" aria-label="${i+1}. ${esc(a.name)}. ${esc(a.period)}.">` +
+        `<span class="g-label"><span class="g-num">${i+1}</span><span class="g-name">${esc(a.name)}</span></span>` +
+        `<span class="g-track">${vig}${bar}${ms}</span></button>`;
+    });
+    g.innerHTML = html;
+    g.addEventListener('click', e => {
+      const row = e.target.closest('.g-row'); if (!row) return;
+      select(+row.dataset.i, true);
+    });
+    if (!reduced) requestAnimationFrame(() => g.classList.add('loaded'));
+  }
+
+  function updateGantt(){
+    document.querySelectorAll('.g-row').forEach(r => {
+      r.setAttribute('aria-current', state.view === 'detail' && +r.dataset.i === state.i ? 'true' : 'false');
+    });
+  }
+
+  /* Detalle */
+  const refSup = refs => refs.length ? `<span class="refs-sup">` + refs.map(r =>
+    `<button type="button" class="ref" data-ref="${r}" aria-label="Referencia ${r}: ${esc(REFS[r].short)}">${r}</button>`
+  ).join('<span aria-hidden="true">,</span>') + '</span>' : '';
+
+  const withRefs = (text, refs) => {
+    if (!refs.length) return esc(text);
+    const k = text.lastIndexOf(' ');
+    return esc(text.slice(0, k + 1)) + `<span class="refs-sup">${esc(text.slice(k + 1))}${refSup(refs)}</span>`;
+  };
+
+  function renderDetail(){
+    const a = A[state.i], el = document.getElementById('detail');
+    el.style.setProperty('--era', eraVar(a.era));
+    const cited = [...new Set([...a.surg.refs, ...a.expo.refs, ...a.idea.refs, ...a.vig.refs, ...a.evidence.map(e => e.ref), ...(a.keys || []).flatMap(k => k.refs)])].sort((x,y) => x - y);
+    const prev = A[state.i - 1], next = A[state.i + 1];
+    el.innerHTML = `
+      <p class="d-meta"><span class="era-tag">${esc(ERAS[a.era])}</span><span>Enfoque ${state.i + 1} de ${A.length}</span></p>
+      <h2>${esc(a.name)}${a.sub ? `<span class="d-sub">${esc(a.sub)}</span>` : ''}</h2>
+      <p class="d-period">${esc(a.period)}</p>
+      <section class="d-section d-idea"><h3>Idea central</h3><p class="lead">${withRefs(a.idea.text, a.idea.refs)}</p></section>
+      <div class="d-grid">
+        <section class="d-section"><h3>Surgimiento</h3><p>${withRefs(a.surg.text, a.surg.refs)}</p></section>
+        <section class="d-section"><h3>Exponentes${refSup(a.expo.refs)}</h3>
+          <ul class="people">${a.people.map(p => `<li>${esc(p[0])}${p[1] ? ` <span class="q">(${esc(p[1])})</span>` : ''}${p[2] ? ` <button type="button" class="xlink" data-slug="${p[2]}">ver su enfoque</button>` : ''}</li>`).join('')}</ul>
+          ${a.note ? `<p class="note">${esc(a.note)}</p>` : ''}
+        </section>
+      </div>
+      ${a.keys ? `<section class="d-section d-keys"><h3>Conceptos clave</h3><div class="k-grid">${a.keys.map(k => `<div><h4>${esc(k.title)}${refSup(k.refs)}</h4><ul>${k.items.map(it => `<li>${it[0] ? `<b>${esc(it[0])}</b> ` : ''}${esc(it[1])}</li>`).join('')}</ul></div>`).join('')}</div></section>` : ''}
+      <section class="d-section d-vig"><h3>Vigencia actual</h3><p>${withRefs(a.vig.text, a.vig.refs)}</p></section>
+      <details class="d-ev">
+        <summary>${a.evidence.length ? `Evidencia de las fuentes <span>(${a.evidence.length} ${a.evidence.length === 1 ? 'cita' : 'citas'})</span>` : 'Referencias del enfoque'}</summary>
+        <p class="hint">${a.evNote ? esc(a.evNote) : 'Fragmentos textuales de las fuentes que sustentan cada dimensión, en su idioma original.'}</p>
+        ${a.evidence.map(e => `<blockquote class="quote"><p>${esc(e.text)}</p>
+          <div class="q-meta">[${e.ref}] ${esc(REFS[e.ref].short)}. Respalda: ${esc(e.fields.join(', '))}.</div></blockquote>`).join('')}
+        <ul class="cited"><h4>Referencias citadas en este enfoque</h4>
+          ${cited.map(r => `<li id="cit-${r}"><b>[${r}]</b> ${esc(REFS[r].short)}. ${esc(REFS[r].title)}</li>`).join('')}
+        </ul>
+      </details>
+      <nav class="d-nav" aria-label="Recorrer enfoques">
+        ${prev ? `<button type="button" class="btn prev" data-go="-1"><small>Anterior</small>${esc(prev.name)}</button>` : ''}
+        ${next ? `<button type="button" class="btn next" data-go="1"><small>Siguiente</small>${esc(next.name)}</button>` : ''}
+      </nav>
+      <p class="kbd-hint">También puedes recorrerlos con las teclas de flecha izquierda y derecha.</p>`;
+    el.classList.remove('swap'); void el.offsetWidth; el.classList.add('swap');
+  }
+
+  document.getElementById('detail').addEventListener('click', e => {
+    const ref = e.target.closest('.ref');
+    if (ref) {
+      const det = document.querySelector('#detail details'); det.open = true;
+      const t = document.getElementById('cit-' + ref.dataset.ref);
+      if (t) {
+        t.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+        t.classList.add('flash'); setTimeout(() => t.classList.remove('flash'), 900);
+      }
+      return;
+    }
+    const x = e.target.closest('.xlink');
+    if (x) { const k = A.findIndex(a => a.slug === x.dataset.slug); if (k >= 0) { select(k, false); scrollToDetail(true); } return; }
+    const go = e.target.closest('[data-go]');
+    if (go) { step(+go.dataset.go); scrollToDetail(true); }
+  });
+
+  function scrollToDetail(force){
+    const el = document.getElementById(state.view === 'detail' ? 'detail' : 'compare');
+    const r = el.getBoundingClientRect();
+    if (force || r.top > window.innerHeight * 0.7 || r.top < 0) {
+      el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+    }
+  }
+
+  /* Comparar */
+  function dimText(a, k){
+    if (k === 'expo') return a.people.map(p => p[0] + (p[1] ? ` (${p[1]})` : '')).join('; ') + (a.note ? '. ' + a.note : '');
+    return a[k].text;
+  }
+  function renderCompare(){
+    document.getElementById('dims').innerHTML = DIMS.map(([k,t]) =>
+      `<button type="button" data-dim="${k}" aria-pressed="${k === state.dim}">${t}</button>`).join('');
+    document.getElementById('dim-col').textContent = DIMS.find(d => d[0] === state.dim)[1];
+    document.getElementById('c-body').innerHTML = A.map((a, i) => `
+      <tr style="--era:${eraVar(a.era)}">
+        <th scope="row"><button type="button" data-open="${i}"><i class="dot"></i><span>${i+1}. ${esc(a.name)}</span></button></th>
+        <td>${esc(dimText(a, state.dim))}</td>
+      </tr>`).join('');
+  }
+  document.getElementById('compare').addEventListener('click', e => {
+    const d = e.target.closest('[data-dim]');
+    if (d) { state.dim = d.dataset.dim; renderCompare(); return; }
+    const o = e.target.closest('[data-open]');
+    if (o) { select(+o.dataset.open, false); scrollToDetail(true); }
+  });
+
+  /* Vistas y navegación */
+  function setHash(){
+    const h = state.view === 'compare' ? 'comparar' : A[state.i].slug;
+    try { history.replaceState(null, '', '#' + h); } catch(e){}
+  }
+  function setView(v){
+    state.view = v;
+    document.getElementById('detail').hidden = v !== 'detail';
+    document.getElementById('compare').hidden = v !== 'compare';
+    document.getElementById('v-detail').setAttribute('aria-pressed', v === 'detail');
+    document.getElementById('v-compare').setAttribute('aria-pressed', v === 'compare');
+    if (v === 'compare') renderCompare();
+    updateGantt(); setHash(); store.set('enfoques-view', v);
+  }
+  function select(i, fromGantt){
+    state.i = Math.max(0, Math.min(A.length - 1, i));
+    renderDetail();
+    setView('detail');
+    store.set('enfoques-i', String(state.i));
+    if (fromGantt) scrollToDetail(false);
+  }
+  function step(d){ if (A[state.i + d]) select(state.i + d, false); }
+
+  document.getElementById('v-detail').addEventListener('click', () => { renderDetail(); setView('detail'); });
+  document.getElementById('v-compare').addEventListener('click', () => setView('compare'));
+
+  document.addEventListener('keydown', e => {
+    if (state.view !== 'detail' || e.altKey || e.ctrlKey || e.metaKey) return;
+    const t = e.target.tagName;
+    if (t === 'INPUT' || t === 'TEXTAREA' || t === 'SELECT' || e.target.isContentEditable) return;
+    if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
+  });
+
+  /* Tamaño de letra */
+  const SIZES = [18, 20, 22, 24, 26];
+  const fsSaved = store.get('enfoques-fs');
+  let fsIdx = fsSaved === null ? 1 : Number(fsSaved);
+  if (!(fsIdx >= 0 && fsIdx < SIZES.length)) fsIdx = 1;
+  function applyFs(){
+    document.documentElement.style.setProperty('--fs', SIZES[fsIdx] + 'px');
+    document.getElementById('fs-out').textContent = Math.round(SIZES[fsIdx] / 20 * 100) + ' %';
+    document.getElementById('fs-down').disabled = fsIdx === 0;
+    document.getElementById('fs-up').disabled = fsIdx === SIZES.length - 1;
+    store.set('enfoques-fs', String(fsIdx));
+  }
+  document.getElementById('fs-down').addEventListener('click', () => { if (fsIdx > 0) { fsIdx--; applyFs(); } });
+  document.getElementById('fs-up').addEventListener('click', () => { if (fsIdx < SIZES.length - 1) { fsIdx++; applyFs(); } });
+
+  /* Referencias generales */
+  const ids = Object.keys(REFS).map(Number).sort((x,y) => x - y);
+  document.getElementById('ref-count').textContent = `(${ids.length})`;
+  document.getElementById('ref-list').innerHTML = ids.map(r =>
+    `<li value="${r}">${esc(REFS[r].short)}. ${esc(REFS[r].title)}</li>`).join('');
+
+  /* Inicio */
+  function fromHash(){
+    const h = (location.hash || '').slice(1);
+    if (h === 'comparar') { renderDetail(); setView('compare'); return true; }
+    const k = A.findIndex(a => a.slug === h);
+    if (k >= 0) { select(k, false); return true; }
+    return false;
+  }
+  applyFs();
+  buildGantt();
+  if (!fromHash()) {
+    const savedRaw = store.get('enfoques-i'); const saved = savedRaw === null ? 0 : Number(savedRaw);
+    state.i = saved >= 0 && saved < A.length ? saved : 0;
+    renderDetail();
+    setView(store.get('enfoques-view') === 'compare' ? 'compare' : 'detail');
+  }
+  window.addEventListener('hashchange', fromHash);
+})();
+</script>
+</body>
+</html>
